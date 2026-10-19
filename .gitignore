@@ -1,0 +1,9 @@
+.venv/
+.idea/
+DENTEX/
+models/
+small_data/
+__pycache__/
+*.pt
+*.joblib
+*.zip
