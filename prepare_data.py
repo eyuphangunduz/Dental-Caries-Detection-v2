@@ -1,12 +1,3 @@
-"""
-prepare_data.py
-
-Merges the DENTEX training (705) and validation (50) sets, which share the
-same label format, extracts tooth-level diagnoses and splits the images into
-train / val / test (70% / 15% / 15%).
-
-Output: data/train.json, data/val.json, data/test.json
-"""
 import json
 import os
 import random

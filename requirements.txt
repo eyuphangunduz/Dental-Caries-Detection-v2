@@ -1,0 +1,8 @@
+gradio
+joblib
+numpy
+pillow
+scikit-learn
+torch
+torchvision
+ultralytics
