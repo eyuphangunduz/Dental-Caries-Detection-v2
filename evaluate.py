@@ -4,8 +4,7 @@ import time
 
 from PIL import Image
 
-from app import cnn, cut, find_teeth, model
-from train_model import images_to_features
+from app import cut, find_teeth, model, tooth_features
 
 THRESHOLDS = [0.5, 0.6, 0.7, 0.8, 0.9]
 MIN_OVERLAP = 0.3
@@ -65,7 +64,7 @@ if __name__ == "__main__":
     for n, info in enumerate(images, 1):
         image = Image.open(info["path"]).convert("RGB")
         teeth = find_teeth(image)
-        probs = model.predict_proba(images_to_features(cnn, [cut(image, box) for fdi, box in teeth])) \
+        probs = model.predict_proba(tooth_features([cut(image, box) for fdi, box in teeth])) \
             if teeth else []
         dentist = [(to_corners(t["bbox"]), t["label"]) for t in info["teeth"]
                    if t["label"] in ("caries", "deep_caries")]

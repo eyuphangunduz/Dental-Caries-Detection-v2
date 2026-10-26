@@ -2,9 +2,11 @@ import os
 
 import gradio as gr
 import joblib
+import numpy as np
 from PIL import ImageDraw, ImageFont
 from ultralytics import YOLO
 
+from novel_method import radiological_features
 from train_model import images_to_features, load_cnn
 
 FDI = [q * 10 + t for q in range(1, 5) for t in range(1, 9)]   # YOLO class id -> FDI tooth number
@@ -15,20 +17,24 @@ THRESHOLD = 0.6   # a tooth is called carious if P(caries) + P(deep caries) >= 0
 print("Loading models...")
 yolo = YOLO(os.path.join("models", "best.pt"))
 cnn = load_cnn()
-model = joblib.load(os.path.join("models", "caries_model.joblib"))
+model = joblib.load(os.path.join("models", "fusion_model.joblib"))
 
 
 def cut(image, box):
-    """Cuts one tooth out of the X-ray with a 10% margin (same as make_dataset.py)."""
     x1, y1, x2, y2 = box
     mx, my = 0.1 * (x2 - x1), 0.1 * (y2 - y1)
     return image.crop((max(0, int(x1 - mx)), max(0, int(y1 - my)),
                        min(image.width, int(x2 + mx)), min(image.height, int(y2 + my))))
 
 
+def tooth_features(tooth_images):
+    cnn_part = images_to_features(cnn, tooth_images)
+    rad_part = np.array([list(radiological_features(img).values()) for img in tooth_images])
+    return np.hstack([cnn_part, rad_part])
+
+
 def classify(tooth_images):
-    """Returns a label (healthy / caries / deep_caries) for every tooth image."""
-    probs = model.predict_proba(images_to_features(cnn, tooth_images))
+    probs = model.predict_proba(tooth_features(tooth_images))
     labels = []
     for p_healthy, p_caries, p_deep in probs:
         if p_caries + p_deep >= THRESHOLD:
@@ -39,7 +45,6 @@ def classify(tooth_images):
 
 
 def find_teeth(image):
-    """Runs YOLO; returns a list of (fdi_number, box). Keeps one box per tooth number."""
     result = yolo.predict(image, imgsz=1024, conf=0.25, agnostic_nms=True, verbose=False)[0]
     best = {}   # fdi -> (confidence, box)
     for box, cls, conf in zip(result.boxes.xyxy.tolist(), result.boxes.cls.tolist(),
@@ -64,14 +69,12 @@ def analyze(image):
     teeth = find_teeth(image)
     note = "\n\nNot: Bu bir araştırma projesidir, tıbbi teşhis yerine geçmez."
 
-    # No teeth found -> treat the whole picture as a single tooth image
     if not teeth:
         label = classify([image])[0]
         return image, f"Tek diş resmi olarak değerlendirildi.\nSonuç: {NAMES_TR[label]}" + note
 
     labels = classify([cut(image, box) for fdi, box in teeth])
 
-    # Draw carious teeth
     draw = ImageDraw.Draw(image)
     font = get_font(max(20, image.width // 60))
     used = []   # label rectangles already drawn (to avoid overlapping text)
@@ -90,7 +93,6 @@ def analyze(image):
         draw.rectangle(rect, fill=color)
         draw.text((x, y), text, fill=(255, 255, 255), font=font)
 
-    # Summary text
     caries = [fdi for (fdi, box), label in zip(teeth, labels) if label == "caries"]
     deep = [fdi for (fdi, box), label in zip(teeth, labels) if label == "deep_caries"]
     lines = [f"{len(teeth)} diş bulundu."]
@@ -109,7 +111,7 @@ demo = gr.Interface(
     outputs=[gr.Image(type="pil", label="Sonuç"), gr.Textbox(label="Bulgular", lines=6)],
     title="Panoramik Röntgende Diş Çürüğü Tespiti",
     description="Turuncu kutu: çürük, kırmızı kutu: derin çürük. "
-                "Model: CNN (ResNet-50) + ANOVA feature selection + SVM.",
+                "Model: CNN (ResNet-50) + radyolojik özellikler + ANOVA feature selection + SVM (novel method).",
     flagging_mode="never",
 )
 

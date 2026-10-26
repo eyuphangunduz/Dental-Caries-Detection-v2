@@ -2,17 +2,17 @@ Test set: 113 X-rays, 420 carious teeth (dentists' labels)
 
 Threshold | Carious teeth found | Severity also correct | False alarms per X-ray
 ----------+---------------------+-----------------------+-----------------------
-   0.5    |  335/420 ( 80%)  |  215/420 ( 51%)    | 10.00
-   0.6    |  317/420 ( 75%)  |  202/420 ( 48%)    | 8.92
-   0.7    |  299/420 ( 71%)  |  194/420 ( 46%)    | 7.77
-   0.8    |  281/420 ( 67%)  |  184/420 ( 44%)    | 6.60
-   0.9    |  165/420 ( 39%)  |   97/420 ( 23%)    | 3.60
+   0.5    |  330/420 ( 79%)  |  212/420 ( 50%)    | 9.73
+   0.6    |  316/420 ( 75%)  |  203/420 ( 48%)    | 8.73
+   0.7    |  299/420 ( 71%)  |  194/420 ( 46%)    | 7.76
+   0.8    |  277/420 ( 66%)  |  182/420 ( 43%)    | 6.67
+   0.9    |  175/420 ( 42%)  |  110/420 ( 26%)    | 3.92
 
 Threshold 0.6 - best X-rays (at least 3 carious teeth):
   train_171.png: found 10/11, false alarms 3
   train_305.png: found 3/3, false alarms 4
-  train_648.png: found 3/3, false alarms 6
+  train_413.png: found 5/6, false alarms 4
 Threshold 0.6 - worst X-rays:
-  train_438.png: found 1/1, false alarms 17
-  train_546.png: found 1/1, false alarms 17
-  val_4.png: found 0/4, false alarms 15
+  train_603.png: found 1/3, false alarms 16
+  train_438.png: found 1/1, false alarms 18
+  val_4.png: found 0/4, false alarms 14
