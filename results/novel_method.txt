@@ -1,0 +1,18 @@
+Model                            | Features | k    C  | 3-class Acc  Macro F1 | 2-class F1
+---------------------------------+----------+---------+-----------------------+-----------
+A) CNN only (previous)           |     2048 | 512   1 |    0.578      0.579   |   0.843
+B) Handcrafted only (base paper) |       50 | 10    1 |    0.556      0.558   |   0.849
+C) CNN + handcrafted (novel)     |     2098 | 512   1 |    0.606      0.606   |   0.848
+
+Novel model kept 512 features: 485 CNN + 27 handcrafted (of 50).
+Best 10 handcrafted features (rank among all 2098 features by ANOVA F-score):
+  #   1  lbp_3
+  #   5  lbp_1
+  #   7  lbp_2
+  #   9  lbp_7
+  #  18  lbp_0
+  #  21  lbp_6
+  #  45  lbp_9
+  #  73  lbp_4
+  #  86  glcm_dissimilarity_d3
+  #  99  glcm_contrast_d3
