@@ -1,0 +1,21 @@
+Whole system: 113 test X-rays, 420 carious teeth. Tooth test: 180 teeth.
+
+Healthy training teeth   | abnormal* | Tooth macro F1 | Threshold | Carious found | False alarms/X-ray
+-------------------------+-----------+----------------+-----------+---------------+-------------------
+A) 400 healthy (current) |         0 |     0.606      |    0.4    |    84%        |  11.24
+A) 400 healthy (current) |         0 |     0.606      |    0.5    |    79%        |   9.73
+A) 400 healthy (current) |         0 |     0.606      |    0.6    |    75%        |   8.73
+
+B) 400 non-carious       |        21 |     0.560      |    0.4    |    84%        |  11.30
+B) 400 non-carious       |        21 |     0.560      |    0.5    |    80%        |   9.61
+B) 400 non-carious       |        21 |     0.560      |    0.6    |    75%        |   8.35
+
+C) 1200 non-carious      |        50 |     0.513      |    0.4    |    66%        |   6.54
+C) 1200 non-carious      |        50 |     0.513      |    0.5    |    59%        |   5.48
+C) 1200 non-carious      |        50 |     0.513      |    0.6    |    48%        |   4.33
+
+D) 2400 non-carious      |        89 |     0.266      |    0.4    |    42%        |   3.91
+D) 2400 non-carious      |        89 |     0.266      |    0.5    |    34%        |   2.88
+D) 2400 non-carious      |        89 |     0.266      |    0.6    |    25%        |   1.94
+
+* abnormal = non-carious training teeth that DENTEX marks as impacted or periapical lesion.
