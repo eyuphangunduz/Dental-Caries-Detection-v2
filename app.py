@@ -10,7 +10,7 @@ from novel_method import radiological_features
 from train_model import images_to_features, load_cnn
 
 FDI = [q * 10 + t for q in range(1, 5) for t in range(1, 9)]   # YOLO class id -> FDI tooth number
-NAMES_TR = {"healthy": "Sağlıklı", "caries": "Çürük", "deep_caries": "Derin çürük"}
+NAMES = {"healthy": "Healthy", "caries": "Caries", "deep_caries": "Deep caries"}
 COLORS = {"caries": (255, 165, 0), "deep_caries": (230, 30, 30)}   # orange, red
 THRESHOLD = 0.6   # a tooth is called carious if P(caries) + P(deep caries) >= 0.6
 
@@ -64,14 +64,14 @@ def get_font(size):
 
 def analyze(image):
     if image is None:
-        return None, "Lütfen bir röntgen yükleyin."
+        return None, "Please upload an X-ray."
     image = image.convert("RGB")
     teeth = find_teeth(image)
-    note = "\n\nNot: Bu bir araştırma projesidir, tıbbi teşhis yerine geçmez."
+    note = "\n\nNote: This is a research project, not a medical diagnosis."
 
     if not teeth:
         label = classify([image])[0]
-        return image, f"Tek diş resmi olarak değerlendirildi.\nSonuç: {NAMES_TR[label]}" + note
+        return image, f"Analysed as a single tooth image.\nResult: {NAMES[label]}" + note
 
     labels = classify([cut(image, box) for fdi, box in teeth])
 
@@ -83,7 +83,7 @@ def analyze(image):
             continue
         color = COLORS[label]
         draw.rectangle(box, outline=color, width=max(3, image.width // 600))
-        text = f"{fdi}: {NAMES_TR[label]}"
+        text = f"{fdi}: {NAMES[label]}"
         x, y = box[0], max(0, box[1] - font.size - 6)
         rect = draw.textbbox((x, y), text, font=font)
         while any(rect[0] < r[2] and rect[2] > r[0] and rect[1] < r[3] and rect[3] > r[1] for r in used):
@@ -95,23 +95,23 @@ def analyze(image):
 
     caries = [fdi for (fdi, box), label in zip(teeth, labels) if label == "caries"]
     deep = [fdi for (fdi, box), label in zip(teeth, labels) if label == "deep_caries"]
-    lines = [f"{len(teeth)} diş bulundu."]
+    lines = [f"{len(teeth)} teeth found."]
     if caries:
-        lines.append(f"Çürük ({len(caries)} diş): " + ", ".join(map(str, caries)))
+        lines.append(f"Caries ({len(caries)} teeth): " + ", ".join(map(str, caries)))
     if deep:
-        lines.append(f"Derin çürük ({len(deep)} diş): " + ", ".join(map(str, deep)))
+        lines.append(f"Deep caries ({len(deep)} teeth): " + ", ".join(map(str, deep)))
     if not caries and not deep:
-        lines.append("Çürük tespit edilmedi.")
+        lines.append("No caries detected.")
     return image, "\n".join(lines) + note
 
 
 demo = gr.Interface(
     fn=analyze,
-    inputs=gr.Image(type="pil", label="Panoramik röntgen (veya tek diş resmi)"),
-    outputs=[gr.Image(type="pil", label="Sonuç"), gr.Textbox(label="Bulgular", lines=6)],
-    title="Panoramik Röntgende Diş Çürüğü Tespiti",
-    description="Turuncu kutu: çürük, kırmızı kutu: derin çürük. "
-                "Model: CNN (ResNet-50) + radyolojik özellikler + ANOVA feature selection + SVM (novel method).",
+    inputs=gr.Image(type="pil", label="Panoramic X-ray (or a single tooth image)"),
+    outputs=[gr.Image(type="pil", label="Result"), gr.Textbox(label="Findings", lines=6)],
+    title="Dental Caries Detection on Panoramic X-rays",
+    description="Orange box: caries, red box: deep caries. "
+                "Model: CNN (ResNet-50) + radiological features + ANOVA feature selection + SVM (novel method).",
     flagging_mode="never",
 )
 

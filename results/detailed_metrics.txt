@@ -1,0 +1,36 @@
+3-CLASS (macro average for 3 classes)
+Model                       | Acc   Prec  Sens  Spec  F1    AUC   Kappa MCC
+---------------------------------------------------------------------------
+Decision Tree (CNN + FS)    | 0.500 0.495 0.500 0.750 0.495 0.625 0.250 0.251
+k-NN (CNN + FS)             | 0.517 0.528 0.517 0.758 0.507 0.717 0.275 0.282
+Random Forest (CNN)         | 0.533 0.534 0.533 0.767 0.533 0.737 0.300 0.300
+Logistic Regression (CNN)   | 0.556 0.559 0.556 0.778 0.556 0.733 0.333 0.334
+CNN only                    | 0.578 0.580 0.578 0.789 0.579 0.753 0.367 0.367
+Radiological only           | 0.556 0.564 0.556 0.778 0.558 0.729 0.333 0.334
+Fusion (ours)               | 0.606 0.609 0.606 0.803 0.606 0.766 0.408 0.409
+
+2-CLASS (healthy vs. carious)
+Model                       | Acc   Prec  Sens  Spec  F1    AUC   Kappa MCC
+---------------------------------------------------------------------------
+Decision Tree (CNN + FS)    | 0.706 0.796 0.750 0.617 0.773 0.683 0.356 0.358
+k-NN (CNN + FS)             | 0.694 0.828 0.683 0.717 0.749 0.797 0.368 0.379
+Random Forest (CNN)         | 0.756 0.817 0.817 0.633 0.817 0.805 0.450 0.450
+Logistic Regression (CNN)   | 0.733 0.781 0.833 0.533 0.806 0.736 0.379 0.381
+CNN only                    | 0.789 0.836 0.850 0.667 0.843 0.811 0.521 0.521
+Radiological only           | 0.794 0.832 0.867 0.650 0.849 0.787 0.528 0.529
+Fusion (ours)               | 0.794 0.837 0.858 0.667 0.848 0.821 0.532 0.532
+
+NOVEL METHOD PER CLASS
+Class        | Prec  Sens  Spec  F1    AUC
+------------------------------------------
+Healthy      | 0.702 0.667 0.858 0.684 0.821
+Caries       | 0.545 0.600 0.750 0.571 0.734
+Deep caries  | 0.579 0.550 0.800 0.564 0.742
+
+Confusion matrix (3 classes, rows = true):
+[[40 11  9]
+ [ 9 36 15]
+ [ 8 19 33]]
+Confusion matrix (2 classes, rows = true):
+[[ 40  20]
+ [ 17 103]]
